@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Đơn Hàng - Hoayeuthuong.com</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .order-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .order-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .status-pending {
+            color: #f0ad4e;
+        }
+
+        .status-confirmed {
+            color: #5bc0de;
+        }
+
+        .status-completed {
+            color: #5cb85c;
+        }
+
+        .status-cancelled {
+            color: #d9534f;
+        }
+
+        .product-list {
+            margin: 15px 0;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .product-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 250px;
+        }
+        .nav-link {
+            color: white;
+        }
+        .nav-link:hover {
+            background-color: #495057;
+        }
+        .nav-link.active {
+            background-color: #495057;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <h3 class="text-center mb-4">Admin Panel</h3>
+                <div class="nav flex-column">
+                    <a href="trangchuadmin.html" class="nav-link">
+                        <i class="fas fa-home me-2"></i> Trang chủ
+                    </a>
+                 
+                    <a href="quanlysanpham.html" class="nav-link">
+                        <i class="fas fa-box me-2"></i> Quản lý sản phẩm
+                    </a>
+                    <a href="quanlyloaisanpham.html" class="nav-link">
+                        <i class="fas fa-list me-2"></i> Quản lý loại sản phẩm
+                    </a>
+                    <a href="quanlytintuc.html" class="nav-link">
+                        <i class="fas fa-newspaper me-2"></i> Quản lý tin tức
+                    </a>
+                    <a href="quanlydonhang.html" class="nav-link active">
+                        <i class="fas fa-shopping-cart me-2"></i> Đơn hàng
+                    </a>
+                 
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="order-container">
+                    <h1 class="mb-4">Quản Lý Đơn Hàng</h1>
+                    
+                    <div class="mb-3">
+                        <select class="form-select" id="statusFilter" onchange="filterOrders()">
+                            <option value="all">Tất cả đơn hàng</option>
+                            <option value="pending">Chờ xác nhận</option>
+                            <option value="confirmed">Đã xác nhận</option>
+                            <option value="completed">Đã hoàn thành</option>
+                            <option value="cancelled">Đã hủy</option>
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Khách hàng</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersList">
+                                <!-- Đơn hàng sẽ được hiển thị ở đây -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let orders = [];
+
+        window.onload = function() {
+            console.log("Trang quản lý đơn hàng đã tải xong");
+            loadOrders();
+        }
+
+        function loadOrders() {
+            try {
+                const storedOrders = localStorage.getItem('orders');
+                console.log("Dữ liệu đơn hàng từ localStorage:", storedOrders);
+                
+                if (storedOrders) {
+                    orders = JSON.parse(storedOrders);
+                    console.log("Số lượng đơn hàng đã tải:", orders.length);
+                } else {
+                    orders = [];
+                    console.log("Không có dữ liệu đơn hàng trong localStorage");
+                }
+                
+                filterOrders();
+            } catch (error) {
+                console.error("Lỗi khi tải đơn hàng:", error);
+                alert("Có lỗi khi tải dữ liệu đơn hàng. Vui lòng thử lại.");
+            }
+        }
+
+        function filterOrders() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            console.log("Lọc đơn hàng theo trạng thái:", statusFilter);
+            
+            const filteredOrders = statusFilter === 'all' 
+                ? orders 
+                : orders.filter(order => order.status === statusFilter);
+            
+            console.log("Số lượng đơn hàng sau khi lọc:", filteredOrders.length);
+            displayOrders(filteredOrders);
+        }
+
+        function displayOrders(ordersToShow) {
+            const ordersContainer = document.getElementById('ordersList');
+            
+            if (ordersToShow.length === 0) {
+                ordersContainer.innerHTML = '<tr><td colspan="6" class="text-center">Không có đơn hàng nào</td></tr>';
+                return;
+            }
+
+            ordersContainer.innerHTML = ordersToShow.map(order => {
+                // Kiểm tra và đảm bảo các thuộc tính tồn tại
+                const orderId = order.id || 'N/A';
+                const orderDate = order.orderDate ? new Date(order.orderDate).toLocaleString() : 'N/A';
+                
+                // Xử lý thông tin khách hàng
+                let customerInfo = { fullName: 'Không có tên', phone: '', address: '' };
+                if (order.customerInfo) {
+                    customerInfo = order.customerInfo;
+                } else if (order.customerName) {
+                    customerInfo.fullName = order.customerName;
+                    customerInfo.phone = order.customerPhone || '';
+                    customerInfo.address = order.customerAddress || '';
+                }
+                
+                // Xử lý tổng tiền
+                const totalAmount = typeof order.totalAmount === 'number' ? order.totalAmount : 
+                                   (typeof order.total === 'number' ? order.total : 0);
+                
+                return `
+                <tr>
+                    <td>#${orderId}</td>
+                    <td>${orderDate}</td>
+                    <td>
+                        <strong>${customerInfo.fullName}</strong><br>
+                        ${customerInfo.phone}<br>
+                        <small>${customerInfo.address}</small>
+                    </td>
+                    <td>${totalAmount.toLocaleString()}đ</td>
+                    <td><span class="badge bg-${getStatusBadgeColor(order.status)}">${getStatusText(order.status)}</span></td>
+                    <td>${getActionButtons(order)}</td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Chờ xác nhận',
+                'confirmed': 'Đã xác nhận',
+                'completed': 'Đã hoàn thành',
+                'cancelled': 'Đã hủy',
+                'new': 'Mới'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusBadgeColor(status) {
+            const colorMap = {
+                'pending': 'warning',
+                'confirmed': 'info',
+                'completed': 'success',
+                'cancelled': 'danger',
+                'new': 'primary'
+            };
+            return colorMap[status] || 'secondary';
+        }
+
+        function getPaymentMethod(method) {
+            return method === 'cod' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng';
+        }
+
+        function getActionButtons(order) {
+            if (order.status === 'pending' || order.status === 'new') {
+                return `
+                    <button class="btn btn-success btn-sm me-2" onclick="updateOrderStatus(${order.id}, 'confirmed')">
+                        Xác nhận 
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="updateOrderStatus(${order.id}, 'cancelled')">
+                        Hủy 
+                    </button>
+                `;
+            } else if (order.status === 'confirmed') {
+                return `
+                    <button class="btn btn-primary btn-sm" onclick="updateOrderStatus(${order.id}, 'completed')">
+                        Hoàn thành
+                    </button>
+                `;
+            }
+            return '';
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            try {
+                console.log(`Cập nhật đơn hàng #${orderId} thành ${newStatus}`);
+                
+                const orderIndex = orders.findIndex(order => order.id === orderId);
+                if (orderIndex !== -1) {
+                    const userId = orders[orderIndex].userId;
+                    
+                    // Cập nhật trạng thái
+                    orders[orderIndex].status = newStatus;
+                    
+                    // Thêm thông tin cập nhật
+                    orders[orderIndex].lastUpdatedBy = 'admin';
+                    orders[orderIndex].lastUpdateTime = new Date().toISOString();
+                    
+                    // Lưu vào localStorage
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    
+                    // Nếu hoàn thành, thêm vào danh sách đơn hàng đã hoàn thành
+                    if (newStatus === 'completed') {
+                        const completedOrders = JSON.parse(localStorage.getItem('completedOrders')) || [];
+                        completedOrders.push(orders[orderIndex]);
+                        localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+                    }
+                    
+                    // Cập nhật giao diện
+                    filterOrders();
+                    
+                    // Thông báo
+                    alert(`Đã cập nhật trạng thái đơn hàng #${orderId} thành ${getStatusText(newStatus)}`);
+                    
+                    // Cập nhật thống kê dashboard nếu có thể
+                    if (window.parent && window.parent.updateDashboardStats) {
+                        window.parent.updateDashboardStats();
+                    }
+                } else {
+                    console.error(`Không tìm thấy đơn hàng với ID ${orderId}`);
+                    alert(`Không tìm thấy đơn hàng #${orderId}`);
+                }
+            } catch (error) {
+                console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+                alert("Có lỗi khi cập nhật trạng thái đơn hàng. Vui lòng thử lại.");
+            }
+        }
+
+        // Hàm tạo đơn hàng mới (nếu cần)
+        function createOrder(orderData) {
+            try {
+                console.log("Tạo đơn hàng mới:", orderData);
+                
+                const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                
+                // Đảm bảo có orderDate và id
+                orderData.id = orderData.id || Date.now();
+                orderData.orderDate = orderData.orderDate || new Date().toISOString();
+                orderData.status = orderData.status || 'pending';
+                
+                // Thêm vào danh sách đơn hàng
+                orders.push(orderData);
+                localStorage.setItem('orders', JSON.stringify(orders));
+
+                // Cập nhật giao diện nếu đang ở trang quản lý đơn hàng
+                if (window.location.href.includes('quanlydonhang.html')) {
+                    loadOrders();
+                }
+                
+                // Cập nhật số liệu thống kê trên trang quản trị
+                if (window.parent && window.parent.updateDashboardStats) {
+                    window.parent.updateDashboardStats();
+                }
+                
+                return true;
+            } catch (error) {
+                console.error("Lỗi khi tạo đơn hàng mới:", error);
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

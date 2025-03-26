@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xóa Dữ Liệu</title>
+    <style>
+        body {
+            background-image: url('images/nenlogin.jpeg');
+            background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.4);
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            text-align: center;
+        }
+        button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+            display: block;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Quản Lý Dữ Liệu</h2>
+        <button class="clear-btn" onclick="clearAllData()">Xóa Tất Cả Dữ Liệu</button>
+        <button class="back-btn" onclick="goBack()">Quay Lại Trang Đăng Nhập</button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        function clearAllData() {
+            if (confirm('Bạn có chắc chắn muốn xóa tất cả dữ liệu người dùng?')) {
+                // Xóa tất cả dữ liệu trong localStorage
+                localStorage.clear();
+                
+                // Hiển thị thông báo
+                const status = document.getElementById('status');
+                status.textContent = 'Đã xóa tất cả dữ liệu thành công!';
+                status.className = 'status success';
+                status.style.display = 'block';
+
+                // Tự động ẩn thông báo sau 3 giây
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'dangnhap.html';
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tin Tức</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 250px;
+        }
+        .nav-link {
+            color: white;
+        }
+        .nav-link:hover {
+            background-color: #495057;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .news-image {
+            width: 100px;
+            height: 60px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <h3 class="text-center mb-4">Admin Panel</h3>
+                <div class="nav flex-column">
+                    <a href="trangchuadmin.html" class="nav-link">
+                        <i class="fas fa-home me-2"></i> Trang chủ
+                  
+                    <a href="quanlysanpham.html" class="nav-link">
+                        <i class="fas fa-box me-2"></i> Quản lý sản phẩm
+                    </a>
+                    <a href="quanlyloaisanpham.html" class="nav-link">
+                        <i class="fas fa-list me-2"></i> Quản lý loại sản phẩm
+                    </a>
+                    <a href="quanlytintuc.html" class="nav-link active">
+                        <i class="fas fa-newspaper me-2"></i> Quản lý tin tức
+                    </a>
+                    <a href="quanlydonhang.html" class="nav-link">
+                        <i class="fas fa-shopping-cart me-2"></i> Đơn hàng
+                    </a>
+                  
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="container">
+                    <h2 class="mb-4">Quản Lý Tin Tức</h2>
+                    
+                    <!-- Add News Button -->
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                        <i class="fas fa-plus"></i> Thêm Tin Tức
+                    </button>
+
+                    <!-- News Table -->
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table" id="newsTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Hình ảnh</th>
+                                        <th>Tiêu đề</th>
+                                        <th>Ngày đăng</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="newsList">
+                                    <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add News Modal -->
+    <div class="modal fade" id="addNewsModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Tin Tức</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addNewsForm">
+                        <div class="mb-3">
+                            <label class="form-label">Tiêu đề</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tóm tắt</label>
+                            <textarea class="form-control" name="summary" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nội dung</label>
+                            <textarea class="form-control" name="content" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hình ảnh</label>
+                            <input type="file" class="form-control" name="image" accept="image/*" onchange="previewImage(this, 'addImagePreview')">
+                            <img id="addImagePreview" class="mt-2" style="max-width: 200px; display: none;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select" name="status">
+                                <option value="published">Đã đăng</option>
+                                <option value="draft">Bản nháp</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="addNews()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit News Modal -->
+    <div class="modal fade" id="editNewsModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sửa Tin Tức</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editNewsForm">
+                        <input type="hidden" id="editNewsId">
+                        <div class="mb-3">
+                            <label class="form-label">Tiêu đề</label>
+                            <input type="text" class="form-control" id="editTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tóm tắt</label>
+                            <textarea class="form-control" id="editSummary" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nội dung</label>
+                            <textarea class="form-control" id="editContent" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hình ảnh</label>
+                            <input type="file" class="form-control" id="editImage" accept="image/*" onchange="previewImage(this, 'editImagePreview')">
+                            <img id="editImagePreview" class="mt-2" style="max-width: 200px; display: none;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select" id="editStatus">
+                                <option value="published">Đã đăng</option>
+                                <option value="draft">Bản nháp</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="updateNews()">Cập nhật</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    let news = JSON.parse(localStorage.getItem('news')) || [];
+
+    // Hàm hiển thị danh sách tin tức
+    function displayNews() {
+        const tbody = document.getElementById('newsList');
+        tbody.innerHTML = news.map(item => `
+            <tr>
+                <td>${item.id}</td>
+                <td><img src="${item.image || ''}" class="news-image"></td>
+                <td>${item.title}</td>
+                <td>${new Date(item.date).toLocaleDateString('vi-VN')}</td>
+                <td>
+                    <span class="badge ${item.status === 'published' ? 'bg-success' : 'bg-warning'}">
+                        ${item.status === 'published' ? 'Đã đăng' : 'Bản nháp'}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2" onclick="editNews(${item.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteNews(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Hàm chuyển đổi ảnh sang Base64
+    function getBase64Image(file) {
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                reject('No file selected');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // Hàm preview ảnh
+    function previewImage(input, previewId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(previewId).src = e.target.result;
+                document.getElementById(previewId).style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Hàm thêm tin tức mới
+    async function addNews() {
+        try {
+            const form = document.getElementById('addNewsForm');
+            const formData = new FormData(form);
+            
+            const imageFile = form.querySelector('input[type="file"]').files[0];
+            const imageBase64 = imageFile ? await getBase64Image(imageFile) : '';
+
+            const newNews = {
+                id: news.length > 0 ? Math.max(...news.map(n => n.id)) + 1 : 1,
+                title: formData.get('title'),
+                summary: formData.get('summary'),
+                content: formData.get('content'),
+                image: imageBase64,
+                status: formData.get('status'),
+                date: new Date().toISOString()
+            };
+
+            news.push(newNews);
+            localStorage.setItem('news', JSON.stringify(news));
+            displayNews();
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addNewsModal'));
+            modal.hide();
+            form.reset();
+            document.getElementById('addImagePreview').style.display = 'none';
+
+            alert('Thêm tin tức thành công!');
+        } catch (error) {
+            console.error('Error adding news:', error);
+            alert('Có lỗi xảy ra khi thêm tin tức');
+        }
+    }
+
+    // Hàm mở modal chỉnh sửa
+    function editNews(id) {
+        const newsItem = news.find(n => n.id === id);
+        if (!newsItem) return;
+
+        document.getElementById('editNewsId').value = newsItem.id;
+        document.getElementById('editTitle').value = newsItem.title;
+        document.getElementById('editSummary').value = newsItem.summary;
+        document.getElementById('editContent').value = newsItem.content;
+        document.getElementById('editStatus').value = newsItem.status;
+
+        if (newsItem.image) {
+            document.getElementById('editImagePreview').src = newsItem.image;
+            document.getElementById('editImagePreview').style.display = 'block';
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('editNewsModal'));
+        modal.show();
+    }
+
+    // Hàm cập nhật tin tức
+    async function updateNews() {
+        try {
+            const id = parseInt(document.getElementById('editNewsId').value);
+            const newsIndex = news.findIndex(n => n.id === id);
+            
+            if (newsIndex === -1) return;
+
+            const imageFile = document.getElementById('editImage').files[0];
+            const imageBase64 = imageFile ? await getBase64Image(imageFile) : news[newsIndex].image;
+
+            news[newsIndex] = {
+                ...news[newsIndex],
+                title: document.getElementById('editTitle').value,
+                summary: document.getElementById('editSummary').value,
+                content: document.getElementById('editContent').value,
+                status: document.getElementById('editStatus').value,
+                image: imageBase64
+            };
+
+            localStorage.setItem('news', JSON.stringify(news));
+            displayNews();
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editNewsModal'));
+            modal.hide();
+
+            alert('Cập nhật tin tức thành công!');
+        } catch (error) {
+            console.error('Error updating news:', error);
+            alert('Có lỗi xảy ra khi cập nhật tin tức');
+        }
+    }
+
+    // Hàm xóa tin tức
+    function deleteNews(id) {
+        if (!confirm('Bạn có chắc chắn muốn xóa tin tức này?')) return;
+        
+        news = news.filter(n => n.id !== id);
+        localStorage.setItem('news', JSON.stringify(news));
+        displayNews();
+    }
+
+    // Khởi tạo hiển thị danh sách
+    displayNews();
+    </script>
+</body>
+</html> 

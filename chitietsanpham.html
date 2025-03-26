@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - Hoayeuthuong.com</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: white;
+        }
+        .logo {
+            width: 200px;
+        }
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+        }
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+        .search-button {
+            padding: 8px 15px;
+            background-color: #ffffff;
+            color: black;
+            border: 1px solid #ddd;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: #ff5252;
+        }
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .cart-icon, .account-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+        .icon {
+            font-size: 24px;
+        }
+        .icon-text {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Delivery bar styles */
+        .delivery-bar {
+            background-color: #f7941e;
+            color: white;
+            padding: 4px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .delivery-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Main menu styles */
+        .main-menu {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #eee;
+            border-top: 1px solid #eee;
+            padding: 10px 20px;
+        }
+        .main-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .main-menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .main-menu a:hover {
+            color: #ff5252;
+        }
+
+        /* Footer styles */
+        .footer {
+            background-color: #f5f5f5;
+            padding: 40px 0;
+            color: #333;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 40px;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            padding: 0 20px;
+        }
+        .footer-section h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .footer-section .phone {
+            color: #ff5252;
+            font-weight: bold;
+        }
+        .shop-link {
+            color: #ff5252;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .certifications {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .certifications img {
+            height: 40px;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+        .footer-section ul li a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .footer-section ul li a:hover {
+            color: #ff5252;
+        }
+
+        /* Style cho phần chi tiết sản phẩm */
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .product-images {
+            position: relative;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail:hover {
+            border-color: #ff5252;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .product-price {
+            font-size: 28px;
+            color: #ff5252;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .product-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quantity-btn {
+            padding: 5px 15px;
+            font-size: 20px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .add-to-cart-btn {
+            background-color: #ff5252;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #ff3939;
+        }
+
+        .product-meta {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .meta-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .related-products {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .related-products h2 {
+            color: #ff5252;
+            margin-bottom: 20px;
+        }
+
+        .related-products-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            flex: 0 0 calc(20% - 16px); /* 20% cho 5 sản phẩm, trừ đi gap */
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .product-card h3 {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .product-card .product-price {
+            color: #ff5252;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .cart-count {
+            background-color: #ff5252;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none; /* Ẩn mặc định */
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Thêm header -->
+    <div class="delivery-bar">
+        <div class="delivery-location">
+            <span>Hồ Chí Minh</span>
+        </div>
+        <div class="language-selector">
+            <img src="images/vn.png" alt="English" style="width: 20px;">
+        </div>
+    </div>
+
+    <div class="header">
+        <img src="images/logoflower.png" alt="Logo" class="logo">
+        
+        <div class="search-container">
+            <input type="text" placeholder="Tìm sản phẩm" class="search-box">
+            <button class="search-button">🔍 Tìm</button>
+        </div>
+        
+        <div class="user-actions">
+            <a href="giohang.html" class="cart-icon">
+                <span class="icon">🛒</span>
+                <span class="icon-text">Giỏ hàng</span>
+                <span class="cart-count" id="cartCount"></span>
+            </a>
+            <a href="dangnhap.html" class="account-icon" id="accountLink">
+                <span class="icon">👤</span>
+                <span class="icon-text" id="welcomeMessage">Tài khoản</span>
+            </a>
+            <a href="#" onclick="logout()" class="account-icon">
+                <span class="icon">🚪</span>
+                <span class="icon-text">Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <nav class="main-menu">
+        <ul>
+            <li><a href="index.html">TRANG CHỦ</a></li>
+            <li><a href="gioithieu.html">GIỚI THIỆU</a></li>
+            <li><a href="sanpham.html">SẢN PHẨM</a></li>
+            <li><a href="tintuc.html">TIN TỨC</a></li>
+            <li><a href="lienhe.html">LIÊN HỆ</a></li>
+              
+            <li><a href="sanpham.html?search=HOA%20CƯỚI">HOA CƯỚI</a></li>
+            <li><a href="sanpham.html?search=Ý%20NGHĨA%20HOA">Ý NGHĨA HOA</a></li>
+            <li><a href="sanpham.html?search=HOA%20TƯƠI">HOA TƯƠI</a></li>  
+        </ul>
+    </nav>
+
+    <div class="product-detail-container" id="productDetail">
+        <!-- Nội dung sẽ được thêm bằng JavaScript -->
+    </div>
+
+    <div class="related-products">
+        <h2>SẢN PHẨM LIÊN QUAN</h2>
+        <div class="related-products-grid" id="relatedProducts">
+            <!-- Sản phẩm liên quan sẽ được thêm bằng JavaScript -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>SHOP HOA TP.</h3>
+                <p class="address">Địa chỉ:</p>
+                <p>Thành phố</p>
+                <p class="phone">Điện thoại:+84292 3831 530</p>
+                <p>Miễn phí giao hoa nội thành Tp.  Các quận ngoại thành vui lòng liên hệ để biết thêm chi tiết (Giá giao sẽ từ 30.000đ-70.000đ).</p>
+                <a href="#" class="shop-link">Shop hoa ở Tp</a>
+            </div>
+
+            <div class="footer-section">
+                <h3>HOAYEUTHUONG.COM</h3>
+                <ul>
+                    <li><a href="#">Giới thiệu</a></li>
+                    <li><a href="#">Tin tức</a></li>
+                    <li><a href="#">Trách nhiệm xã hội</a></li>
+                    <li><a href="#">Tuyển dụng</a></li>
+                    <li><a href="#">Câu hỏi thường gặp (FAQs)</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Giới thiệu Hoayeuthuong.com đến người thân</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>CHĂM SÓC KHÁCH HÀNG</h3>
+                <ul>
+                    <li><a href="#">Thắc mắc và khiếu nại</a></li>
+                    <li><a href="#">Cam kết hài lòng 100%</a></li>
+                    <li><a href="#">Chính sách bảo mật thông tin</a></li>
+                    <li><a href="#">Chính sách và điều khoản</a></li>
+                    <li><a href="#">Hướng dẫn đặt hàng</a></li>
+                    <li><a href="#">Chính sách bảo mật thanh toán</a></li>
+                    <li><a href="#">Hướng dẫn thanh toán</a></li>
+                    <li><a href="#">Phí giao hàng</a></li>
+                </ul>
+            </div>
+
+    
+        </div>
+        <div class="certifications">
+            <img src="images/congthuong.png" alt="Đã thông báo Bộ Công Thương">
+            <img src="images/dmca.png" alt="DMCA Protected">
+        </div>
+    </footer>
+
+    <script>
+        window.onload = function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('welcomeMessage').textContent = currentUser.username;
+                document.getElementById('accountLink').href = 'thongtinkhachhang.html';
+            } else {
+                document.getElementById('welcomeMessage').textContent = "Đăng nhập";
+                document.getElementById('accountLink').href = 'dangnhap.html';
+            }
+
+            // Lấy ID sản phẩm từ URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id'));
+            
+            if (!productId) {
+                document.getElementById('productDetail').innerHTML = '<p>Không tìm thấy sản phẩm</p>';
+                return;
+            }
+
+            // Tải thông tin sản phẩm
+            loadProductDetails(productId);
+            updateCartCount();
+        }
+
+        function loadProductDetails(productId) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.id === productId);
+
+            if (!product) {
+                document.getElementById('productDetail').innerHTML = '<p>Không tìm thấy sản phẩm</p>';
+                return;
+            }
+
+            console.log('Loading product:', product); // Để debug
+
+            // Hiển thị chi tiết sản phẩm
+            const detailHTML = `
+                <div class="product-images">
+                    <img src="${product.image || 'images/default-product.jpg'}" alt="${product.name}" class="main-image">
+                </div>
+                <div class="product-info">
+                    <h1 class="product-title">${product.name}</h1>
+                    <div class="product-price">${product.price.toLocaleString()}đ</div>
+                    <div class="product-description">
+                        ${product.description || 'Chưa có mô tả chi tiết cho sản phẩm này.'}
+                    </div>
+                    <p>Số lượng còn lại: ${product.quantity || 0}</p>
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" onclick="updateQuantity(-1)">-</button>
+                        <input type="number" value="1" min="1" max="${product.quantity || 0}" class="quantity-input" id="quantity">
+                        <button class="quantity-btn" onclick="updateQuantity(1)">+</button>
+                    </div>
+                    ${product.quantity > 0 ? 
+                        `<button class="add-to-cart-btn" onclick="addToCartWithQuantity(${product.id})">
+                            Thêm vào giỏ hàng
+                        </button>` :
+                        `<button class="add-to-cart-btn" disabled style="background-color: #ccc;">
+                            Hết hàng
+                        </button>`
+                    }
+                </div>
+            `;
+
+            document.getElementById('productDetail').innerHTML = detailHTML;
+
+            // Tải sản phẩm liên quan
+            loadRelatedProducts(product.category, productId);
+        }
+
+        function updateQuantity(change) {
+            const input = document.getElementById('quantity');
+            const maxStock = parseInt(input.getAttribute('max'));
+            const newValue = parseInt(input.value) + change;
+            if (newValue >= 1 && newValue <= maxStock) {
+                input.value = newValue;
+            }
+        }
+
+        function addToCartWithQuantity(productId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+                window.location.href = 'dangnhap.html';
+                return;
+            }
+
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                alert('Không tìm thấy sản phẩm!');
+                return;
+            }
+
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            // Kiểm tra số lượng trong kho
+            if (!product.quantity) {
+                product.quantity = 0; // Nếu chưa có thuộc tính quantity thì khởi tạo
+            }
+
+            if (product.quantity < quantity) {
+                alert('Xin lỗi, số lượng sản phẩm trong kho không đủ!');
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem(`cart_${currentUser.username}`)) || [];
+            const existingItem = cart.find(item => item.productId === productId);
+            
+            if (existingItem) {
+                // Kiểm tra xem có đủ số lượng để thêm không
+                if (product.quantity < (existingItem.quantity + quantity)) {
+                    alert('Xin lỗi, số lượng sản phẩm trong kho không đủ!');
+                    return;
+                }
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    productId: productId,
+                    quantity: quantity,
+                    price: product.price,
+                    name: product.name,
+                    image: product.image
+                });
+            }
+
+            // Cập nhật số lượng trong kho
+            product.quantity -= quantity;
+            
+            // Lưu lại thông tin sản phẩm và giỏ hàng
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem(`cart_${currentUser.username}`, JSON.stringify(cart));
+            
+            alert('Đã thêm sản phẩm vào giỏ hàng!');
+            updateCartCount();
+        }
+
+        function loadRelatedProducts(category, currentProductId) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const relatedProducts = products
+                .filter(p => p.category === category && p.id !== currentProductId)
+                .slice(0, 5); // Lấy 5 sản phẩm liên quan
+
+            const relatedHTML = relatedProducts.map(product => `
+                <div class="product-card">
+                    <a href="chitietsanpham.html?id=${product.id}" style="text-decoration: none; color: inherit;">
+                        <img src="${product.image || 'images/default-product.jpg'}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p class="product-price">${product.price.toLocaleString()}đ</p>
+                    </a>
+                    <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+                        Thêm vào giỏ
+                    </button>
+                </div>
+            `).join('');
+
+            document.getElementById('relatedProducts').innerHTML = relatedHTML;
+        }
+
+        function updateCartCount() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const cartCountElement = document.getElementById('cartCount');
+            
+            if (currentUser) {
+                const cart = JSON.parse(localStorage.getItem(`cart_${currentUser.username}`)) || [];
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                
+                if (totalItems > 0) {
+                    cartCountElement.style.display = 'block';
+                    cartCountElement.textContent = totalItems;
+                } else {
+                    cartCountElement.style.display = 'none';
+                }
+            } else {
+                cartCountElement.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'dangnhap.html';
+        }
+    </script>
+</body>
+</html> 

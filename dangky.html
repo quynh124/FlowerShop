@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký</title>
+    <style>
+        body {
+            background-image: url('images/layoutflower.jpg'); /* Thay đổi đường dẫn đến ảnh nền */
+            background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.4); /* Light background for form */
+            color: black; /* Change text color to black */
+            padding: 30px; /* Increased padding */
+            border-radius: 15px; /* More rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Softer shadow */
+            width: 300px; /* Thêm độ rộng cố định */
+            margin: 0 auto; /* Căn giữa container */
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            display: block;
+            background: rgba(255, 255, 255, 0.2); /* Giảm độ trong suốt */
+            backdrop-filter: blur(0.10px); /* Thêm hiệu ứng kính mờ */
+            -webkit-backdrop-filter: blur(5px);
+            color: black; /* Đổi màu chữ thành trắng */
+        }
+        input::placeholder {
+           color: black;
+        }
+        button {
+            width: 90%; /* Giảm độ rộng button để khớp với input */
+            padding: 10px;
+            margin: 10px auto; /* Thêm margin auto để căn giữa */
+            display: block; /* Hiển thị dạng block để có thể căn giữa */
+            background-color: #6200ea; /* Purple background */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Thêm hiệu ứng chuyển tiếp */
+        }
+        button:hover {
+            background-color: #3700b3; /* Darker purple on hover */
+        }
+        /* Additional styles for the remember me section */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 style="text-align: center;">Đăng Ký</h2>
+        <form id="registerForm" onsubmit="return registerUser(event)">
+            <input type="text" id="username" placeholder="Tên người dùng" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Mật khẩu" required>
+            <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+            <button type="submit">Đăng Ký</button>
+            <p style="text-align: center;"><a href="dangnhap.html" style="color: black;">Đã có tài khoản? Đăng nhập</a></p>
+            <button type="button" onclick="window.location.href='index.html'">Trang chủ</button>
+        </form>
+    </div>
+
+    <script>
+        function registerUser(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Kiểm tra độ dài username
+            if (username.length < 3 || username.length > 20) {
+                alert('Tên người dùng phải từ 3 đến 20 ký tự!');
+                return false;
+            }
+
+            // Kiểm tra định dạng email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Email không hợp lệ!');
+                return false;
+            }
+
+            // Kiểm tra độ mạnh của mật khẩu
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(password)) {
+                alert('Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Mật khẩu không khớp!');
+                return false;
+            }
+
+            // Kiểm tra xem người dùng đã tồn tại chưa
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(user => user.username === username)) {
+                alert('Tên người dùng đã tồn tại!');
+                return false;
+            }
+
+            // Kiểm tra email đã được sử dụng chưa
+            if (users.some(user => user.email === email)) {
+                alert('Email này đã được đăng ký!');
+                return false;
+            }
+
+            // Thêm người dùng mới
+            users.push({
+                username: username,
+                email: email,
+                password: password
+            });
+
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Đăng ký thành công!');
+            window.location.href = 'dangnhap.html';
+            return false;
+        }
+    </script>
+</body>
+</html>

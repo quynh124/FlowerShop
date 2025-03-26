@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Khách Hàng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #ff5252;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff5252;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            background-color: #ff5252;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #ff3939;
+        }
+
+        .btn-secondary {
+            background-color: #666;
+        }
+
+        .btn-secondary:hover {
+            background-color: #555;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .error-message {
+            color: #ff5252;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+            background-color: #E8F5E9;
+            border-radius: 4px;
+        }
+
+        .info-text {
+            display: block;
+            font-size: 16px;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        /* Thêm styles cho phần lịch sử đơn hàng */
+        .order-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status-shipping {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-delivered {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+
+        .order-products {
+            margin-bottom: 10px;
+        }
+
+        .order-total {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thông Tin Khách Hàng</h1>
+        
+        <div class="profile-section">
+            <h2 class="section-title">Thông Tin Cá Nhân</h2>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Tên đăng nhập:</label>
+                    <span id="username" class="info-text"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email:</label>
+                    <span id="email" class="info-text"></span>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2 class="section-title">Đổi Mật Khẩu</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Mật khẩu hiện tại:</label>
+                    <input type="password" id="currentPassword" disabled>
+                    <div class="error-message" id="currentPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Mật khẩu mới:</label>
+                    <input type="password" id="newPassword" disabled>
+                    <div class="error-message" id="newPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu mới:</label>
+                    <input type="password" id="confirmPassword" disabled>
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+            </form>
+        </div>
+        <div class="buttons">
+            <button class="btn" id="editButton" onclick="toggleEdit()">Sửa Thông Tin</button>
+            <button class="btn" id="saveButton" onclick="saveChanges()" style="display: none;">Lưu Thay Đổi</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">Quay Lại Trang Chủ</button>
+        </div>
+        <div class="profile-section">
+            <h2 class="section-title">Lịch Sử Đơn Hàng</h2>
+            <div id="orderHistory">
+                <!-- Order history will be inserted here -->
+            </div>
+        </div>
+
+        <div class="success-message" id="successMessage"></div>
+
+      
+    </div>
+
+    <script>
+        // Kiểm tra đăng nhập và hiển thị thông tin khi tải trang
+        window.onload = function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'dangnhap.html';
+                return;
+            }
+
+            // Lấy thông tin người dùng từ localStorage
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userInfo = users.find(user => user.username === currentUser.username);
+
+            if (userInfo) {
+                document.getElementById('username').textContent = userInfo.username || '';
+                document.getElementById('email').textContent = userInfo.email || '';
+            }
+
+            // Hiển thị lịch sử đơn hàng
+            displayOrderHistory(currentUser.username);
+        };
+
+        function validateForm() {
+            let isValid = true;
+            const email = document.getElementById('email').textContent;
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                document.getElementById('emailError').textContent = 'Email không hợp lệ';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+
+            return isValid;
+        }
+
+        function validatePassword() {
+            let isValid = true;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Kiểm tra mật khẩu hiện tại
+            if (currentPassword) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.username === currentUser.username);
+
+                if (currentPassword !== user.password) {
+                    document.getElementById('currentPasswordError').textContent = 'Mật khẩu hiện tại không đúng';
+                    document.getElementById('currentPasswordError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('currentPasswordError').style.display = 'none';
+                }
+
+                // Kiểm tra mật khẩu mới
+                if (!newPassword) {
+                    document.getElementById('newPasswordError').textContent = 'Vui lòng nhập mật khẩu mới';
+                    document.getElementById('newPasswordError').style.display = 'block';
+                    isValid = false;
+                } else if (newPassword.length < 6) {
+                    document.getElementById('newPasswordError').textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+                    document.getElementById('newPasswordError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('newPasswordError').style.display = 'none';
+                }
+
+                // Kiểm tra xác nhận mật khẩu
+                if (newPassword !== confirmPassword) {
+                    document.getElementById('confirmPasswordError').textContent = 'Mật khẩu xác nhận không khớp';
+                    document.getElementById('confirmPasswordError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('confirmPasswordError').style.display = 'none';
+                }
+            }
+
+            return isValid;
+        }
+
+        function saveChanges() {
+            if (!validateForm()) {
+                const successMessage = document.getElementById('successMessage');
+                successMessage.textContent = 'Vui lòng kiểm tra lại thông tin!';
+                successMessage.style.display = 'block';
+                successMessage.style.backgroundColor = '#f8d7da';
+                successMessage.style.color = '#842029';
+                successMessage.style.padding = '10px';
+                successMessage.style.marginTop = '20px';
+                successMessage.style.borderRadius = '4px';
+                
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+                return;
+            }
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(user => user.username === currentUser.username);
+
+            if (userIndex !== -1) {
+                // Kiểm tra và cập nhật mật khẩu nếu có nhập mật khẩu hiện tại
+                const currentPassword = document.getElementById('currentPassword').value;
+                if (currentPassword) {
+                    if (!validatePassword()) {
+                        const successMessage = document.getElementById('successMessage');
+                        successMessage.textContent = 'Vui lòng kiểm tra lại thông tin mật khẩu!';
+                        successMessage.style.display = 'block';
+                        successMessage.style.backgroundColor = '#f8d7da';
+                        successMessage.style.color = '#842029';
+                        successMessage.style.padding = '10px';
+                        successMessage.style.marginTop = '20px';
+                        successMessage.style.borderRadius = '4px';
+                        
+                        setTimeout(() => {
+                            successMessage.style.display = 'none';
+                        }, 3000);
+                        return;
+                    }
+                }
+
+                // Cập nhật thông tin cá nhân
+                const updatedUser = {
+                    ...users[userIndex],
+                    email: document.getElementById('email').textContent
+                };
+
+                // Kiểm tra xem có đổi mật khẩu không
+                const isPasswordChanged = currentPassword && validatePassword();
+                
+                if (isPasswordChanged) {
+                    updatedUser.password = document.getElementById('newPassword').value;
+                    users[userIndex] = updatedUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+
+                    // Hiển thị thông báo đổi mật khẩu thành công
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.textContent = 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.';
+                    successMessage.style.display = 'block';
+                    successMessage.style.backgroundColor = '#E8F5E9';
+                    successMessage.style.color = '#4CAF50';
+                    successMessage.style.padding = '10px';
+                    successMessage.style.marginTop = '20px';
+                    successMessage.style.borderRadius = '4px';
+                    successMessage.style.fontWeight = 'bold';
+                    successMessage.style.textAlign = 'center';
+
+                    // Đợi 2 giây trước khi đăng xuất
+                    setTimeout(() => {
+                        localStorage.removeItem('currentUser');
+                        window.location.href = 'dangnhap.html';
+                    }, 2000);
+                } else {
+                    // Nếu chỉ cập nhật thông tin khác
+                    users[userIndex] = updatedUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.textContent = 'Cập nhật thông tin thành công!';
+                    successMessage.style.display = 'block';
+                    successMessage.style.backgroundColor = '#E8F5E9';
+                    successMessage.style.color = '#4CAF50';
+                    successMessage.style.padding = '10px';
+                    successMessage.style.marginTop = '20px';
+                    successMessage.style.borderRadius = '4px';
+
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                    
+                    toggleEdit();
+                }
+            }
+        }
+
+        function toggleEdit() {
+            const email = document.getElementById('email');
+            const currentPassword = document.getElementById('currentPassword');
+            const newPassword = document.getElementById('newPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const editButton = document.getElementById('editButton');
+            const saveButton = document.getElementById('saveButton');
+
+            if (editButton.style.display === 'none') {
+                // Đang ở chế độ chỉnh sửa, chuyển sang chế độ xem
+                email.readOnly = true;
+                currentPassword.disabled = true;
+                newPassword.disabled = true;
+                confirmPassword.disabled = true;
+                editButton.style.display = 'inline-block';
+                saveButton.style.display = 'none';
+
+                // Clear password fields and error messages
+                currentPassword.value = '';
+                newPassword.value = '';
+                confirmPassword.value = '';
+                document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+                document.getElementById('successMessage').style.display = 'none';
+            } else {
+                // Đang ở chế độ xem, chuyển sang chế độ chỉnh sửa
+                email.readOnly = false;
+                currentPassword.disabled = false;
+                newPassword.disabled = false;
+                confirmPassword.disabled = false;
+                editButton.style.display = 'none';
+                saveButton.style.display = 'inline-block';
+            }
+        }
+
+        function displayOrderHistory(username) {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const userOrders = orders.filter(order => order.userId === username);
+            const orderHistoryContainer = document.getElementById('orderHistory');
+
+            if (userOrders.length === 0) {
+                orderHistoryContainer.innerHTML = '<p>Chưa có đơn hàng nào</p>';
+                return;
+            }
+
+            // Sắp xếp đơn hàng theo thời gian mới nhất
+            userOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
+            orderHistoryContainer.innerHTML = userOrders.map(order => {
+                const statusClass = getStatusClass(order.status);
+                const statusText = getStatusText(order.status);
+                const orderDate = new Date(order.orderDate).toLocaleDateString('vi-VN');
+                
+                // Chỉ hiển thị nút hủy đơn khi trạng thái là 'pending'
+                const cancelButton = order.status === 'pending' 
+                    ? `<button class="btn-cancel" onclick="cancelOrder(${order.id})">Hủy đơn hàng</button>`
+                    : '';
+
+                return `
+                    <div class="order-item" data-order-id="${order.id}">
+                        <div class="order-header">
+                            <div>
+                                <strong>Mã đơn hàng:</strong> #${order.id}
+                                <br>
+                                <small>Ngày đặt: ${orderDate}</small>
+                            </div>
+                            <div>
+                                <span class="order-status ${statusClass}">${statusText}</span>
+                                ${cancelButton}
+                            </div>
+                        </div>
+                        <div class="order-products">
+                            ${order.items.map(item => `
+                                <div>
+                                    ${item.name} x ${item.quantity} - ${(item.price * item.quantity).toLocaleString()}đ
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="order-total">
+                            Tổng tiền: ${order.totalAmount.toLocaleString()}đ
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusClass(status) {
+            const statusClasses = {
+                'pending': 'status-pending',
+                'confirmed': 'status-confirmed',
+                'completed': 'status-completed',
+                'cancelled': 'status-cancelled',
+                'shipping': 'status-shipping'
+            };
+            return statusClasses[status] || '';
+        }
+
+        function getStatusText(status) {
+            const statusTexts = {
+                'pending': 'Chờ xác nhận',
+                'confirmed': 'Đã xác nhận',
+                'completed': 'Đã hoàn thành',
+                'cancelled': 'Đã hủy',
+                'shipping': 'Đang giao hàng'
+            };
+            return statusTexts[status] || 'Không xác định';
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+                const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                // Chuyển orderId thành số để so sánh
+                const orderIndex = orders.findIndex(order => order.id === parseInt(orderId));
+                
+                console.log('Orders:', orders); // Debug: kiểm tra danh sách đơn hàng
+                console.log('OrderId:', orderId); // Debug: kiểm tra ID đơn hàng cần hủy
+                console.log('OrderIndex:', orderIndex); // Debug: kiểm tra index tìm được
+                
+                if (orderIndex === -1) {
+                    alert('Không tìm thấy đơn hàng!');
+                    return;
+                }
+
+                const order = orders[orderIndex];
+                
+                // Chỉ cho phép hủy đơn khi đơn hàng đang ở trạng thái "pending" (chờ xác nhận)
+                if (order.status !== 'pending') {
+                    alert('Không thể hủy đơn hàng này vì đơn hàng đã được xác nhận hoặc đã bị hủy!');
+                    return;
+                }
+
+                // Cập nhật trạng thái đơn hàng thành 'cancelled'
+                orders[orderIndex] = {
+                    ...order,
+                    status: 'cancelled',
+                    lastUpdatedBy: 'customer',
+                    lastUpdateTime: new Date().toISOString(),
+                    cancelReason: 'Khách hàng tự hủy đơn'
+                };
+                
+                // Lưu vào localStorage
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Cập nhật lại giao diện
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                displayOrderHistory(currentUser.username);
+                
+                // Hiển thị thông báo thành công
+                const successMessage = document.getElementById('successMessage');
+                successMessage.textContent = 'Đã hủy đơn hàng thành công!';
+                successMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html> 

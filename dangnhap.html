@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <style>
+        body {
+            background-image: url('images/layoutflower.jpg'); /* Thay đổi đường dẫn đến ảnh nền */
+            background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.4);
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            margin: 0 auto;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            display: block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(0.10px);
+            -webkit-backdrop-filter: blur(5px);
+            color: black;
+        }
+        input::placeholder {
+            color: black;
+        }
+        button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+            display: block;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 style="text-align: center;">Đăng Nhập</h2>
+        <form id="loginForm" onsubmit="return loginUser(event)">
+            <input type="text" id="username" placeholder="Tên người dùng" required>
+            <input type="password" id="password" placeholder="Mật khẩu" required>
+            <input type="file" id="usersFile" accept=".json" style="display: none;">
+            <button type="submit">Đăng Nhập</button>
+            <p style="text-align: center;"><a href="dangky.html" style="color: black;">Không có tài khoản? Đăng ký</a></p>
+            <button type="button" onclick="window.location.href='index.html'">Trang chủ</button>
+        </form>
+    </div>
+
+    <script>
+        // Thêm sự kiện cho việc tải file lên
+        document.getElementById('usersFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const users = JSON.parse(e.target.result);
+                        localStorage.setItem('users', JSON.stringify(users));
+                        alert('Đã tải dữ liệu người dùng thành công!');
+                    } catch (error) {
+                        alert('Lỗi khi đọc file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function loginUser(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Kiểm tra tài khoản admin
+            if (username === 'admin' && password === 'admin123') {
+                const adminUser = {
+                    username: 'admin',
+                    isAdmin: true
+                };
+                localStorage.setItem('currentUser', JSON.stringify(adminUser));
+                alert('Đăng nhập admin thành công!');
+                window.location.href = 'admin/trangchuadmin.html'; // Chuyển đến trang admin
+                return false;
+            }
+
+            // Đọc dữ liệu từ localStorage cho người dùng thông thường
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                user.isAdmin = false; // Đảm bảo người dùng thường không có quyền admin
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                alert('Đăng nhập thành công!');
+                window.location.href = 'index.html';
+            } else {
+                alert('Tên đăng nhập hoặc mật khẩu không đúng!');
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>
+
